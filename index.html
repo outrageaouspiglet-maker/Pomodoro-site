@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pomodoro & Tâches</title>
+    <style>
+        body { font-family: Arial; text-align: center; margin-top: 50px; }
+        #tasks { margin-bottom: 20px; }
+        li { margin: 5px 0; }
+        button { margin-left: 5px; }
+        #timer { font-size: 40px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<h1>Pomodoro & Tâches</h1>
+
+<input type="text" id="taskInput" placeholder="Ajouter une tâche">
+<button onclick="addTask()">Ajouter</button>
+
+<ul id="tasks"></ul>
+
+<div id="timer">25:00</div>
+<button onclick="startTimer()">Start</button>
+<button onclick="pauseTimer()">Pause</button>
+<button onclick="resetTimer()">Reset</button>
+
+<script>
+let tasks = [];
+let timer;
+let timeLeft = 25*60; // 25 minutes
+
+function displayTasks() {
+    let list = document.getElementById('tasks');
+    list.innerHTML = '';
+    tasks.forEach((task, index) => {
+        let li = document.createElement('li');
+        li.textContent = task;
+        let btn = document.createElement('button');
+        btn.textContent = 'Fait';
+        btn.onclick = () => { tasks.splice(index, 1); displayTasks(); };
+        li.appendChild(btn);
+        list.appendChild(li);
+    });
+}
+
+function addTask() {
+    let input = document.getElementById('taskInput');
+    if(input.value.trim() !== '') {
+        tasks.push(input.value.trim());
+        input.value = '';
+        displayTasks();
+    }
+}
+
+function updateTimerDisplay() {
+    let minutes = Math.floor(timeLeft/60);
+    let seconds = timeLeft % 60;
+    document.getElementById('timer').textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+}
+
+function startTimer() {
+    if(!timer) {
+        timer = setInterval(() => {
+            if(timeLeft > 0) {
+                timeLeft--;
+                updateTimerDisplay();
+            } else {
+                clearInterval(timer);
+                timer = null;
+                alert('Pomodoro terminé !');
+                timeLeft = 25*60;
+                updateTimerDisplay();
+            }
+        }, 1000);
+    }
+}
+
+function pauseTimer() {
+    clearInterval(timer);
+    timer = null;
+}
+
+function resetTimer() {
+    clearInterval(timer);
+    timer = null;
+    timeLeft = 25*60;
+    updateTimerDisplay();
+}
+</script>
+
+</body>
+</html>
+
